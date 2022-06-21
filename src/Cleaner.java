@@ -1,9 +1,7 @@
 import java.awt.*;
 import java.util.*;
 import java.io.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Cleaner {
 
@@ -11,6 +9,7 @@ public class Cleaner {
     private ArrayList<String> initial_folder_names;
     private Queue<String> created_saves;
     private ScheduledExecutorService loop;
+
     /**
      * Process that runs on a specified folder to clear any new folders created since initiation.
      * Also keeps the newest folder created since initialization, so if a 2nd new folder is created the second newest
@@ -28,6 +27,9 @@ public class Cleaner {
         System.out.println("Cleaner process found these initial folders: " + initial_folder_names);
     }
 
+    /**
+     * Starts the cleaner process
+     */
     public void Start() {
         Runnable task = () -> RunCleanTask();
         loop = Executors.newScheduledThreadPool(1);
@@ -35,11 +37,17 @@ public class Cleaner {
         Index.SendActionMessage("Process started", Color.green);
     }
 
+    /**
+     * Terminates the cleaner process
+     */
     public void Stop() {
         loop.shutdown();
         Index.SendActionMessage("Process aborted", Color.RED);
     }
 
+    /**
+     * Gets called on an interval, performs the task of identifying saves that need to be culled
+     */
     private void RunCleanTask() {
         File folder = new File(folder_uri);
         File[] subdirectories = folder.listFiles();
@@ -66,6 +74,10 @@ public class Cleaner {
         System.out.println("Clean task executed");
     }
 
+    /**
+     * Deletes a savefile
+     * @param save_game_folder a File object of the savegame folder that you wish to delete
+     */
     private void DeleteSaveGame(File save_game_folder) {
         //Subnautica structure:
         //      Savefile

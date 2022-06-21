@@ -6,15 +6,22 @@ public class Index {
     private static Frame GUI;
     private static Cleaner cleaner;
 
+    /**
+     * App entrypoint
+     * @param args
+     */
     public static void main(String[] args) {
         AppdataHandler.Init(); //initialises the appdata handler
         Start();
     }
 
+    /**
+     * Initiates the main part of the application
+     */
     public static void Start() {
         if (AppdataHandler.VerifyState()) { //the correct appdata structure is correct from this point on
             //create the gui
-            GUI = new Frame(AppdataHandler.getPersistentPath());
+            GUI = new Frame();
             GUI.Populate();
             GUI.Show(true);
             GUI.InitializeState();

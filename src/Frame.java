@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class Frame extends JFrame {
     private Container content_pane;
@@ -9,7 +8,10 @@ public class Frame extends JFrame {
     private JLabel status_display;
     private JLabel action_display;
 
-    public Frame(String initial_persistent_uri) {
+    /**
+     * The GUI for the app
+     */
+    public Frame() {
         super("Hardcore Save Deleter");
         setSize(300, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -139,6 +141,9 @@ public class Frame extends JFrame {
         action_display.setForeground(text_color);
     }
 
+    /**
+     * Sets the initial state for the components of the app such as status bar and action bar
+     */
     public void InitializeState() {
         //set initial action message
         UpdateLastAction("Waiting...", Color.gray);
