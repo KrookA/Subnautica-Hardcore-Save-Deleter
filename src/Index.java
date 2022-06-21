@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
@@ -72,4 +71,11 @@ public class Index {
     public static void SendFrameError(String msg) {
         GUI.UpdateStatus(msg, Color.red);
     }
+
+    /**
+     * Sends an action message to be displayed by the frame
+     * @param msg the action message to be displayed
+     * @param color the color of text of the message
+     */
+    public static void SendActionMessage(String msg, Color color) { GUI.UpdateLastAction(msg, color); }
 }

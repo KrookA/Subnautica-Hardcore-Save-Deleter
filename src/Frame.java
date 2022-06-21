@@ -7,6 +7,7 @@ public class Frame extends JFrame {
     private Container content_pane;
     private JTextField url_display;
     private JLabel status_display;
+    private JLabel action_display;
 
     public Frame(String initial_persistent_uri) {
         super("Hardcore Save Deleter");
@@ -41,12 +42,18 @@ public class Frame extends JFrame {
     public void Populate() {
         //The top panel
         JPanel top_panel = new JPanel(new BorderLayout());
+        //The center panel
+        JPanel center_panel = new JPanel((new BorderLayout()));
         //The bottom panel
         JPanel bottom_panel = new JPanel((new BorderLayout()));
+        bottom_panel.setBackground(Color.white);
+        bottom_panel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
 
         //URL display text box
         url_display = new JTextField();
         url_display.setEditable(false);
+        url_display.setBackground(Color.white);
+        url_display.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, Color.GRAY));
 
         //Open file dialog button
         JButton open_dialog_btn = new JButton();
@@ -60,7 +67,7 @@ public class Frame extends JFrame {
                 Index.StopCleanerProcess();
                 Index.InitCleanerProcess();
             }
-            else { //directory selected was not a valid subnautica directory
+            else if (chosen_uri != null) { //directory selected was not a valid subnautica directory
                 UpdateStatus("Invalid Subnautica directory selected :(", Color.red);
                 Index.StopCleanerProcess();
             }
@@ -73,10 +80,17 @@ public class Frame extends JFrame {
         status_display = new JLabel();
         status_display.setHorizontalAlignment(SwingConstants.CENTER);
 
-        bottom_panel.add(status_display, BorderLayout.CENTER);
+        center_panel.add(status_display, BorderLayout.CENTER);
+
+        //action display
+        action_display = new JLabel();
+        action_display.setText(" ");
+
+        bottom_panel.add(action_display);
 
         content_pane.add(top_panel, BorderLayout.PAGE_START);
-        content_pane.add(bottom_panel, BorderLayout.CENTER);
+        content_pane.add(center_panel, BorderLayout.CENTER);
+        content_pane.add(bottom_panel, BorderLayout.PAGE_END);
     }
 
     /**
@@ -115,7 +129,19 @@ public class Frame extends JFrame {
         status_display.setForeground(text_color);
     }
 
+    /**
+     * Updates the text displayed at the bottom of the app for the last action executed by the process
+     * @param action_text the text to display
+     * @param text_color the color of the text to display
+     */
+    public void UpdateLastAction(String action_text, Color text_color) {
+        action_display.setText(action_text);
+        action_display.setForeground(text_color);
+    }
+
     public void InitializeState() {
+        //set initial action message
+        UpdateLastAction("Waiting...", Color.gray);
         //check if initial subnautica path is fine
         if (Index.VerifySubnauticaDirectory(AppdataHandler.getPersistentPath())) {
             ChangeDisplayedURI(AppdataHandler.getPersistentPath());
@@ -124,7 +150,7 @@ public class Frame extends JFrame {
         }
         else {
             ChangeDisplayedURI("");
-            UpdateStatus("Select the directory that contains \"Subnautica.exe\"", Color.black);
+            UpdateStatus("Select the directory that contains \"Subnautica.exe\" or \"SubnauticaZero.exe\"", Color.black);
         }
     }
 }

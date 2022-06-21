@@ -1,6 +1,6 @@
+import java.awt.*;
 import java.util.*;
 import java.io.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,17 +29,15 @@ public class Cleaner {
     }
 
     public void Start() {
-        Runnable task = new Runnable() {
-            public void run() {
-                RunCleanTask();
-            }
-        };
+        Runnable task = () -> RunCleanTask();
         loop = Executors.newScheduledThreadPool(1);
         loop.scheduleAtFixedRate(task, 5, 5, TimeUnit.SECONDS);
+        Index.SendActionMessage("Process started", Color.green);
     }
 
     public void Stop() {
         loop.shutdown();
+        Index.SendActionMessage("Process aborted", Color.RED);
     }
 
     private void RunCleanTask() {
@@ -98,6 +96,7 @@ public class Cleaner {
                 }
                 //finally delete the save folder
                 save_game_folder.delete();
+                Index.SendActionMessage("Deleted save: " + save_game_folder.getName(), Color.RED);
             }
         }
         catch (Exception e) {
