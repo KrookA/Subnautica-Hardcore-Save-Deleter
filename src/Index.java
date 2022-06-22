@@ -1,10 +1,11 @@
 import java.awt.*;
 import java.io.File;
 
-public class Index {
+public final class Index {
 
     private static Frame GUI;
     private static Cleaner cleaner;
+    public static String OS;
 
     /**
      * App entrypoint
@@ -35,16 +36,43 @@ public class Index {
 
     /**
      * Checks if the given URI is a valid subnautica instance folder
-     * @param test_uri the path to the folder that contains Subnautica.exe
-     * @return true if the folder is a valid subnautica instance, else false
+     * @param test_uri the path to the "Subnautica" folder
+     * @param selected_by_user true if selected by user, false if read from appdata
+     * @return string path to the savegame folder if valid, else null
      */
-    public static boolean VerifySubnauticaDirectory(String test_uri) {
-        File proposed_savegame_folder = new File(test_uri + "/SNAppData/SavedGames");
-        if (proposed_savegame_folder.exists()) {
-            return true;
+    public static String VerifySubnauticaDirectory(String test_uri, boolean selected_by_user) {
+        if (test_uri != null) {
+            //should be selected by user
+            if (selected_by_user) {
+                File proposed_savegame_folder_steam = new File(test_uri + "/SNAppData/SavedGames");
+                File proposed_savegame_folder_epic = new File(test_uri + "/Subnautica/SavedGames");
+                File proposed_savegame_folder_epic_bz = new File(test_uri + "/SubnauticaZero/SavedGames");
+
+                if (proposed_savegame_folder_steam.exists()) { //steam installation
+                    return test_uri + "\\SNAppData\\SavedGames";
+                }
+                else if (proposed_savegame_folder_epic.exists()) { //epic installation
+                    return test_uri + "\\Subnautica\\SavedGames";
+                }
+                else if (proposed_savegame_folder_epic_bz.exists()) { //epic bz installation
+                    return test_uri + "\\SubnauticaZero\\SavedGames";
+                }
+                else { //invalid subnautica directory
+                    return null;
+                }
+            }
+            else { //read from appdata
+                File appdata_savegame_folder = new File(test_uri);
+                if (appdata_savegame_folder.exists()) {
+                    return test_uri;
+                }
+                else {
+                    return null;
+                }
+            }
         }
         else {
-            return false;
+            return null;
         }
     }
 
@@ -53,7 +81,7 @@ public class Index {
      */
     public static void InitCleanerProcess() {
         if (cleaner == null) {
-            cleaner = new Cleaner(AppdataHandler.getPersistentPath() + "\\SNAppData\\SavedGames");
+            cleaner = new Cleaner(AppdataHandler.getPersistentPath());
             cleaner.Start();
         }
         else {

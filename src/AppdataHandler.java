@@ -9,7 +9,22 @@ public final class AppdataHandler {
      * Initiates the AppdataHandler at the beginning of the process.
      */
     public static void Init() {
-        appdata_path = System.getenv("AppData"); //points to the "roaming" folder
+        //determine if OS is Win or Mac
+        String OS = System.getProperty("os.name").toUpperCase();
+        if (OS.contains("WIN")) {
+            Index.OS = "win";
+            appdata_path = System.getenv("AppData"); //points to the "roaming" folder
+            System.out.println("User is on Windows OS");
+        }
+        else if (OS.contains("MAC")){
+            Index.OS = "mac";
+            appdata_path = System.getProperty("user.home") + "/Library/Application Support";
+            System.out.println("User is on Mac OS");
+        }
+        else {
+            System.out.println("No support for platforms other than MAC and Win as of now");
+            System.exit(0);
+        }
         persistent_file_path = appdata_path + "/KrookA/Hardcore Save Deleter/subnauticapath.txt";
     }
 

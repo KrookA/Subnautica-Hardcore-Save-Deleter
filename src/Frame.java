@@ -7,6 +7,7 @@ public class Frame extends JFrame {
     private JTextField url_display;
     private JLabel status_display;
     private JLabel action_display;
+    private HelpFrame theHelpFrame;
 
     /**
      * The GUI for the app
@@ -62,9 +63,10 @@ public class Frame extends JFrame {
         open_dialog_btn.setText("Open");
         open_dialog_btn.addActionListener(e -> { //open dialog button clicked
             String chosen_uri = Show_Folder_Dialog();
-            if (Index.VerifySubnauticaDirectory(chosen_uri)) { //valid subnautica directory selected
-                ChangeDisplayedURI(chosen_uri);
-                AppdataHandler.setPersistentPath(chosen_uri);
+            String chosen_savegame_path_or_null = Index.VerifySubnauticaDirectory(chosen_uri, true);
+            if (chosen_savegame_path_or_null != null) { //valid subnautica directory selected
+                ChangeDisplayedURI(chosen_savegame_path_or_null);
+                AppdataHandler.setPersistentPath(chosen_savegame_path_or_null);
                 UpdateStatus("Running :)", Color.green);
                 Index.StopCleanerProcess();
                 Index.InitCleanerProcess();
@@ -82,7 +84,21 @@ public class Frame extends JFrame {
         status_display = new JLabel();
         status_display.setHorizontalAlignment(SwingConstants.CENTER);
 
+        //help button
+        JPanel help_button_container = new JPanel(new BorderLayout());
+        JButton help_button = new JButton();
+        help_button.addActionListener(e -> {
+            if (theHelpFrame == null) {
+                theHelpFrame = new HelpFrame(this);
+                theHelpFrame.Show(true);
+                System.out.println("Help window created");
+            }
+        });
+        help_button.setText("Help");
+        help_button_container.add(help_button, BorderLayout.EAST);
+
         center_panel.add(status_display, BorderLayout.CENTER);
+        center_panel.add(help_button_container, BorderLayout.PAGE_END);
 
         //action display
         action_display = new JLabel();
@@ -101,7 +117,11 @@ public class Frame extends JFrame {
      */
     public String Show_Folder_Dialog() {
         JFileChooser file_chooser = new JFileChooser();
-        file_chooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+        String dialog_start_at_dir = System.getProperty("user.home");
+        if (Index.OS.equals("win")) {
+            dialog_start_at_dir = System.getenv("AppData");
+        }
+        file_chooser.setCurrentDirectory(new java.io.File(dialog_start_at_dir));
         file_chooser.setDialogTitle("Select Subnautica Directory");
         file_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         file_chooser.setAcceptAllFileFilterUsed(false);
@@ -148,14 +168,23 @@ public class Frame extends JFrame {
         //set initial action message
         UpdateLastAction("Waiting...", Color.gray);
         //check if initial subnautica path is fine
-        if (Index.VerifySubnauticaDirectory(AppdataHandler.getPersistentPath())) {
+        String initial_appdata_savegame_path = Index.VerifySubnauticaDirectory(AppdataHandler.getPersistentPath(), false);
+        if (initial_appdata_savegame_path != null) {
             ChangeDisplayedURI(AppdataHandler.getPersistentPath());
             UpdateStatus("Running :)", Color.green);
             Index.InitCleanerProcess();
         }
         else {
             ChangeDisplayedURI("");
-            UpdateStatus("Select the directory that contains \"Subnautica.exe\" or \"SubnauticaZero.exe\"", Color.black);
+            UpdateStatus("Select the specific \"Subnautica\" directory, depending on if you have the Steam or Epic version installed (click help for information on where to find this folder).", Color.black);
         }
+    }
+
+    /**
+     * Runs when the help window has closed, should never be called manually
+     */
+    public void HelpWindowHasClosed() {
+        theHelpFrame = null;
+        System.out.println("Help window closed");
     }
 }
