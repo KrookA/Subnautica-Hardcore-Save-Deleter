@@ -62,9 +62,8 @@ public class HelpFrame extends JFrame {
                 "</ul>" +
                 "<br />" +
                 "<br />" +
-                "<br />" +
-                "<br />" +
-                "<p style='text-align: right; font-family: sans-serif; color: gray'><i><u>App made by KrookA</u></i></p>" +
+                "<p style='text-align: right; font-family: sans-serif; color: black'><i><u>App made by KrookA</u></i></p>" +
+                "<p style='text-align: right; font-family: sans-serif; color: gray'><i>Special thanks to Rubiks37 and cinnamoncookies for testing</i></p>" +
                 "</html>";
         main_content.setText(main_content_html);
         main_content_panel.add(main_content, BorderLayout.CENTER);

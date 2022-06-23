@@ -176,7 +176,7 @@ public class Frame extends JFrame {
         }
         else {
             ChangeDisplayedURI("");
-            UpdateStatus("Select the specific \"Subnautica\" directory, depending on if you have the Steam or Epic version installed (click help for information on where to find this folder).", Color.black);
+            UpdateStatus("Select the relevant \"Subnautica\" directory, depending on if you have the Steam or Epic Games version installed (click the help button for information on where to find this folder).", Color.black);
         }
     }
 
